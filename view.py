@@ -33,7 +33,7 @@ class Desenho:
 
         pygame.display.flip()
 
-        while perf_counter() - self.tempo < 1 / 48:
+        while perf_counter() - self.tempo < 1 / 60:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False

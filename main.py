@@ -100,6 +100,8 @@ def passos(corda):
     forcaG = np.array([0, -10])
     h = 1 / 60
 
+    count = 0
+
     for p in corda.particulas:
         if p.mobilidade:
             continue
@@ -112,19 +114,33 @@ def passos(corda):
 
     for barra in corda.barras:
         relaxacao(barra)
-
-
-view = Desenho()
-corda = Corda(inicializarCorda(0.1, 6, 0.001, [0.1 for i in range(60)]))
+        count = count + 1
+    
+    print("Iterações: ", count)
+    return count
 
 
 def Simulacao(view, corda):
-    passos(corda)
+    iteracoes = passos(corda)
 
     view.atualizaDesenho(corda.particulas)
 
+    return iteracoes
+
+distancia = 0.1
+tamanho = 6
+passo = 0.001
+massa = [0.1 for i in range(60)]
+
+view = Desenho()
+corda = Corda(inicializarCorda(distancia, tamanho, passo, massa))
+
+total_iteracoes = 0
 
 while view.rodando():
-    Simulacao(view, corda)
+    total_iteracoes += Simulacao(view, corda)
 
+    view.clock.tick(60)
+
+print("Total de iterações: ", total_iteracoes)
 pygame.quit()
