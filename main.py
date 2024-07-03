@@ -3,6 +3,7 @@
 # Thomas de Oliva -
 import numpy as np
 from view import Desenho
+import pygame
 
 class Particula:
     def __init__(self, imovel, posicao, massa):
@@ -112,13 +113,15 @@ def GetParticulas(corda,pontos):
         pontos.append(posicao)
     return pontos
 
+view = Desenho()
+corda = Corda()
+
 def Simulacao(view,corda):
     passos(corda)
     view.atualizaDesenho(GetParticulas(corda,[]))
 
 
-view = Desenho()
-corda = Corda()
+while view.rodando():
+    Simulacao(view, corda)
 
-while (view):
-    Simulacao(view,corda)
+pygame.quit()
