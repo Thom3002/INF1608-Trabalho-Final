@@ -2,6 +2,8 @@
 # Marcello Nascif -
 # Thomas de Oliva -
 import numpy as np
+import pygame
+
 from view import Desenho
 from particula import Particula
 from barra import Barra
@@ -112,6 +114,10 @@ def passos(corda):
     return
 
 
+view = Desenho()
+corda = Corda()
+
+
 def Simulacao(view, corda):
     passos(corda)
 
@@ -119,8 +125,7 @@ def Simulacao(view, corda):
     view.atualizaDesenho(lstAux)
 
 
-view = Desenho()
-corda = Corda(inicializarCorda([], [], 0.1, 6, 0.001, [0.1 for i in range(60)]))
-
-while view:
+while view.rodando():
     Simulacao(view, corda)
+
+pygame.quit()
