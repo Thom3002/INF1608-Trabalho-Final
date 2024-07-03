@@ -19,7 +19,7 @@ def distanciaParticulas(p1, p2):
     return dist
 
 
-def CriaBarras(barras, particulas):
+def criaBarras(barras, particulas):
     ind = 0
     qtdPontos = len(particulas)
 
@@ -45,7 +45,7 @@ def CriaBarras(barras, particulas):
     return barras
 
 
-def Relaxacao(barra):
+def relaxacao(barra):
     p1 = barra.p1
     p2 = barra.p2
     dist = distanciaParticulas(p1.posicao, p2.posicao)
@@ -75,7 +75,7 @@ def inicializarCorda(dist, tam, passo, massa):
         else:
             pontos.append(Particula(massa[i], posicaoAnt, False))
             
-    barras = CriaBarras(barras, pontos)
+    barras = criaBarras(barras, pontos)
     qtdParticulas = len(pontos)
 
     for i in range(qtdParticulas - 1):
@@ -90,31 +90,28 @@ def inicializarCorda(dist, tam, passo, massa):
     qtdBarras = len(barras)
 
     for i in range(qtdBarras - 1):
-        Relaxacao(barras[i])
+        relaxacao(barras[i])
 
     return barras, pontos
 
 
 def passos(corda):
     delta = 0.02
-    forcaG = np.array([0, -10])  # Atua apenas no eixo Y
+    forcaG = np.array([0, -10])
     h = 1 / 60
-    # print("to na corda")
-    for p in corda.particulas:
-        # sleep(1)
-        if p.mobilidade:
-            # print("to no if na corda")
-            continue
-        # Integracao de Verlet
-        posicaoAnt = p.posicaoAnt
 
+    for p in corda.particulas:
+        if p.mobilidade:
+            continue
+
+        posicaoAnt = p.posicaoAnt
         posicaoProx = p.posicao + (1 - delta) * (p.posicao - posicaoAnt) + ((h * h) / p.massa) * forcaG
 
-        p.posicaoAnt = p.posicao  # Atualiza a posição anterior
+        p.posicaoAnt = p.posicao
         p.posicao = posicaoProx
 
     for barra in corda.barras:
-        Relaxacao(barra)
+        relaxacao(barra)
 
 
 view = Desenho()
