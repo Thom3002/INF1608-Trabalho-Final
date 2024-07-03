@@ -23,5 +23,9 @@ class Particula:
 
     @posicao.setter
     def posicao(self, posicao):
-        self._posicaoAnt = self._posicao
         self._posicao = posicao
+
+    @posicaoAnt.setter
+    def posicaoAnt(self, posicao):
+        self._posicaoAnt = posicao
+        

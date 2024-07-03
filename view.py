@@ -4,6 +4,7 @@ from time import perf_counter
 comprimento = 600
 altura = 400
 
+
 class Desenho:
     def __init__(self):
         pygame.init()
@@ -17,9 +18,10 @@ class Desenho:
 
     def coordenadas(self, tam):
         def interno(c):
-            valor1 = comprimento / 2.0 * (1 + c[0] / tam)
-            valor2 = altura * (1 - 0.8 * c[1] / tam)
+            valor1 = comprimento / 2.0 * (1 + c.posicao[0] / tam)
+            valor2 = altura * (1 - 0.8 * c.posicao[1] / tam)
             return valor1, valor2
+
         return interno
 
     def atualizaDesenho(self, pontos):
@@ -40,4 +42,3 @@ class Desenho:
 
     def rodando(self):
         return self.running
-

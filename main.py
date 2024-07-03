@@ -3,6 +3,7 @@
 # Thomas de Oliva -
 import numpy as np
 import pygame
+from time import sleep
 
 from view import Desenho
 from particula import Particula
@@ -10,7 +11,7 @@ from barra import Barra
 from corda import Corda
 
 
-def DistanciaParticulas(p1, p2):
+def distanciaParticulas(p1, p2):
     dist = (
         (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
     ) ** 0.5
@@ -28,14 +29,14 @@ def CriaBarras(barras, particulas):
         p1 = particulas[ind]
         p2 = particulas[ind + 1]
 
-        novaBarra = Barra(p1, p2, DistanciaParticulas(p1.posicao, p2.posicao))
+        novaBarra = Barra(p1, p2, distanciaParticulas(p1.posicao, p2.posicao))
 
         barras = [novaBarra] + barras
 
         for i in range(ind + 2, limite):
             p3 = particulas[i]
 
-            novaBarra = Barra(p1, p3, DistanciaParticulas(p1.posicao, p3.posicao))
+            novaBarra = Barra(p1, p3, distanciaParticulas(p1.posicao, p3.posicao))
 
             barras.append(novaBarra)
 
@@ -47,7 +48,7 @@ def CriaBarras(barras, particulas):
 def Relaxacao(barra):
     p1 = barra.p1
     p2 = barra.p2
-    dist = DistanciaParticulas(p1.posicao, p2.posicao)
+    dist = distanciaParticulas(p1.posicao, p2.posicao)
     direcao = (p1.posicao - p2.posicao) / dist
     correcao = barra.tam - dist
 
@@ -62,14 +63,18 @@ def Relaxacao(barra):
         p2.posicao = p2.posicao - direcao * correcao
 
 
-def inicializarCorda(pontos, barras, dist, tam, passo, massa):
+def inicializarCorda(dist, tam, passo, massa):
+    pontos = []
+    barras = []
+
     razaoDistCord = int(tam / dist)
     for i in range(razaoDistCord):
         posicaoAnt = np.array([dist * i, 11 + tam - dist * i])
         if i == 0:
-            pontos.append(Particula(True, posicaoAnt, massa[i]))
+            pontos.append(Particula( massa[i], posicaoAnt, True))
         else:
-            pontos.append(Particula(False, posicaoAnt, massa[i]))
+            pontos.append(Particula(massa[i], posicaoAnt, False))
+            
     barras = CriaBarras(barras, pontos)
     qtdParticulas = len(pontos)
 
@@ -92,37 +97,34 @@ def inicializarCorda(pontos, barras, dist, tam, passo, massa):
 
 def passos(corda):
     delta = 0.02
-    count = 0
     forcaG = np.array([0, -10])  # Atua apenas no eixo Y
     h = 1 / 60
-    for i, p in enumerate(corda.particulas):
+    # print("to na corda")
+    for p in corda.particulas:
+        # sleep(1)
         if p.mobilidade:
+            # print("to no if na corda")
             continue
         # Integracao de Verlet
         posicaoAnt = p.posicaoAnt
-        PosicaoProx = (
-            p.posicao
-            + (1 - delta) * (p.posicao - posicaoAnt)
-            + ((h * h) / p.massa) * forcaG
-        )
 
-        p.posicao = PosicaoProx
-    for i in range(len(corda.barras)):
-        Relaxacao(corda.barras[i])
-        count += 1
+        posicaoProx = p.posicao + (1 - delta) * (p.posicao - posicaoAnt) + ((h * h) / p.massa) * forcaG
 
-    return
+        p.posicaoAnt = p.posicao  # Atualiza a posição anterior
+        p.posicao = posicaoProx
+
+    for barra in corda.barras:
+        Relaxacao(barra)
 
 
 view = Desenho()
-corda = Corda()
+corda = Corda(inicializarCorda(0.1, 6, 0.001, [0.1 for i in range(60)]))
 
 
 def Simulacao(view, corda):
     passos(corda)
 
-    lstAux = corda.particulas
-    view.atualizaDesenho(lstAux)
+    view.atualizaDesenho(corda.particulas)
 
 
 while view.rodando():
