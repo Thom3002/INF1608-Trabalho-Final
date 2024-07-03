@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Corda:
     def __init__(self, particulas):
         self._barras, self._particulas = particulas
